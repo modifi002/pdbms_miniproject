@@ -27,6 +27,7 @@ GND   ->  GND
 
 
 ------- Soil Moisture Sensor ------------
+
 A0  ->  A0
 
 VCC ->  5V
@@ -34,6 +35,7 @@ VCC ->  5V
 GND ->  GND
 
 --------- Load Cell --------------
+
 DT  ->  D3
 
 SCK ->  D4
