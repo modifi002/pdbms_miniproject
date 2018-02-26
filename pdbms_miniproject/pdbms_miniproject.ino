@@ -39,6 +39,10 @@ HX711 scale(SCALE_DOUT_PIN, SCALE_SCK_PIN);
 #define DHTTYPE DHT22
 DHT dht(DHTPIN, DHTTYPE);
 
+// Config connect WiFi
+#define WIFI_SSID "___________________"
+#define WIFI_PASSWORD "_____________________"
+
 // Deep Sleep
 //#define SECONDS_DS(seconds) ((seconds)*1000000UL)
 int httpCode;
@@ -47,7 +51,7 @@ void setup() {
   Serial.begin(115200);
   Wire.begin();
   
-  lightMeter.begin();
+  
   
   //scale.set_scale(2280.f);// <- set here calibration factor!!!
   scale.set_scale(752.f);// <- set here calibration factor!!!
@@ -56,7 +60,8 @@ void setup() {
   // Initialising the UI will init the display too.
   display.init();
   display.flipScreenVertically();
-  
+
+  lightMeter.begin();
   dht.begin();
   wifi();
   display.clear();
@@ -74,9 +79,9 @@ void loop() {
   //Send_data();.
   n++;
   display.display();
-  if(n == 5) {
+  if(n == 10) {
     Send_data();
-    if(httpCode == 200) Sleep();
+    //if(httpCode == 200) Sleep();
     n = 0;
   }  
   //ESP.deepSleep(SECONDS_DS(5));
@@ -149,8 +154,9 @@ void Soil(){
 
 void wifi(){
   WiFi.mode(WIFI_STA);
-  WiFiManager wifiManager;
-  wifiManager.setTimeout(300);
+  //WiFiManager wifiManager;
+  //wifiManager.setTimeout(300);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   display.clear();
   display.setFont(ArialMT_Plain_16);
   display.drawString(5,25,"Disconnected ");
@@ -158,17 +164,15 @@ void wifi(){
   delay(1000);
   display.clear();
   display.setFont(ArialMT_Plain_16);
-  display.drawString(30,5,"Mode AP");
-  display.setFont(ArialMT_Plain_16);
-  display.drawString(5,23,"Pleass connect");
-  display.setFont(ArialMT_Plain_16);
-  display.drawString(5,45,"WiFi : pdbms");
+  display.drawString(20,5,"Connecting");
   display.display();
-  if(!wifiManager.autoConnect("pdbms")) {
-    //reset and try again, or maybe put it to deep sleep
-    ESP.reset();
-    delay(5000);
+  
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.print(".");
+    //lcd.print(".");
+    delay(500);
   }
+  
 }
 
 void Send_data(){
